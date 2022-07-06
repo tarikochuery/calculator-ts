@@ -83,3 +83,7 @@ div.keyboard-row > .zero-key{
   border-radius: 10px;
   width: 45%;
 }
+
+.selected{
+  opacity: 0.3;
+}
