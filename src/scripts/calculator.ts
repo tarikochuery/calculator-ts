@@ -1,38 +1,18 @@
+import { calculatorFactory } from "./calculatorFactory"
+import { toggleOperatorKeySelection } from "./changeOperatorKeySelection"
+
 const numericKeysArray = document.getElementsByClassName('numeric') as HTMLCollectionOf<HTMLButtonElement>
 const calculatorScreen = document.getElementById('screen-value') as HTMLParagraphElement
 const operatorKeysArray = document.getElementsByClassName('operator') as HTMLCollectionOf<HTMLButtonElement>
 const clearButton = document.getElementById('clear') as HTMLButtonElement
 
-
-interface ICalculatorFactory {
-  sum: (value1: string, value2: string) => void
-  minus: (value1: string, value2: string) => void
-  times: (value1: string, value2: string) => void
-  divide: (value1: string, value2: string) => void
-}
-
 let screenValue : string = calculatorScreen.innerText
 let screenValueAfterSelectOperator: string = '0'
-let isOperatorSelected: boolean = false
+export let isOperatorSelected: boolean = false
 let selectedOperation: Function
 
-const calculatorFactory: ICalculatorFactory = {
-  sum: (value1: string, value2: string): void => {
-    let result: number = Number(value1) + Number(value2)
-    calculatorScreen.innerText = result.toString()
-  },
-  minus: (value1: string, value2: string): void => {
-    let result: number = Number(value1) - Number(value2)
-    calculatorScreen.innerText = result.toString()
-  },
-  times: (value1: string, value2: string): void => {
-    let result: number = Number(value1) * Number(value2)
-    calculatorScreen.innerText = result.toString()
-  },
-  divide: (value1: string, value2: string): void => {
-    let result: number = Number(value1) / Number(value2)
-    calculatorScreen.innerText = result.toString()
-  }
+export const changeScreenValue = (value: string) => {
+  calculatorScreen.innerText = value
 }
 
 const concatScreenValue = (value: string | number) : void => {
@@ -40,50 +20,50 @@ const concatScreenValue = (value: string | number) : void => {
 
   if (isOperatorSelected){
     if (typeof value === `number`) {
-      screenValueAfterSelectOperator === '0' ? calculatorScreen.innerText = '' + value.toString() : calculatorScreen.innerText = screenValueAfterSelectOperator + value.toString()
+      screenValueAfterSelectOperator === '0' ? changeScreenValue('' + value.toString()) : changeScreenValue(screenValueAfterSelectOperator + value.toString())
       screenValueAfterSelectOperator = calculatorScreen.innerText
       return
     }
   
-    screenValueAfterSelectOperator === '0' ? calculatorScreen.innerText = '' + value.toString() : calculatorScreen.innerText = screenValueAfterSelectOperator + value.toString()
+    screenValueAfterSelectOperator === '0' ? changeScreenValue('' + value.toString()) : changeScreenValue(screenValueAfterSelectOperator + value.toString())
     screenValueAfterSelectOperator = calculatorScreen.innerText
     return
 
   } else {
     if (typeof value === `number`) {
-      screenValue === '0' ? calculatorScreen.innerText = '' + value.toString() : calculatorScreen.innerText = screenValue + value.toString()
+      screenValue === '0' ? changeScreenValue('' + value.toString()) : changeScreenValue(screenValue + value.toString())
       screenValue = calculatorScreen.innerText
       return
     }
   
-    screenValue === '0' ? calculatorScreen.innerText = '' + value.toString() : calculatorScreen.innerText = screenValue + value.toString()
+    screenValue === '0' ? changeScreenValue('' + value.toString()) : changeScreenValue(screenValue + value.toString())
     screenValue = calculatorScreen.innerText
     return
   }
-
 }
 
 const handleClickOperator = (event: MouseEvent): void => {
   let button = event.target as HTMLButtonElement
 
-  if (button.id === 'equal') {
+  if (button.id === 'equal' && isOperatorSelected) {
     selectedOperation(screenValue, screenValueAfterSelectOperator)
     isOperatorSelected = false
+    toggleOperatorKeySelection()
     screenValue = calculatorScreen.innerText
     screenValueAfterSelectOperator = '0'
     return
+  } else if (button.id !== 'equal') {
+    isOperatorSelected = true
+    let id: string = button.id
+    toggleOperatorKeySelection(id)
+    selectedOperation = calculatorFactory[id]
   }
 
-  // button.classList.toggle('selected')
-
-  isOperatorSelected = true
-  let id: string = button.id
-
-  selectedOperation = calculatorFactory[id]
 }
 
 const clearScreen = (): void => {
-  calculatorScreen.innerText = '0'
+  changeScreenValue('0')
+  toggleOperatorKeySelection()
   screenValue = '0'
   screenValueAfterSelectOperator = '0'
 }
