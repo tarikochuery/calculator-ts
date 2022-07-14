@@ -1,10 +1,11 @@
-import { calculatorFactory } from "./calculatorFactory"
+import { calculatorFactory, ICalculatorFactory } from "./calculatorFactory"
 import { toggleOperatorKeySelection } from "./changeOperatorKeySelection"
 
 const numericKeysArray = document.getElementsByClassName('numeric') as HTMLCollectionOf<HTMLButtonElement>
-const calculatorScreen = document.getElementById('screen-value') as HTMLParagraphElement
 const operatorKeysArray = document.getElementsByClassName('operator') as HTMLCollectionOf<HTMLButtonElement>
+const calculatorScreen = document.getElementById('screen-value') as HTMLParagraphElement
 const clearButton = document.getElementById('clear') as HTMLButtonElement
+const percentKey = document.getElementById('percent') as HTMLButtonElement
 
 let screenValue : string = calculatorScreen.innerText
 let screenValueAfterSelectOperator: string = '0'
@@ -54,18 +55,23 @@ const handleClickOperator = (event: MouseEvent): void => {
     return
   } else if (button.id !== 'equal') {
     isOperatorSelected = true
-    let id: string = button.id
+    let id = button.id as keyof ICalculatorFactory
     toggleOperatorKeySelection(id)
     selectedOperation = calculatorFactory[id]
   }
-
 }
 
 const clearScreen = (): void => {
-  changeScreenValue('0')
   toggleOperatorKeySelection()
+  isOperatorSelected = false
+  changeScreenValue('0')
   screenValue = '0'
   screenValueAfterSelectOperator = '0'
+}
+
+const handleClickPercent = (): void => {
+  calculatorFactory.percent(screenValue)
+  screenValue = calculatorScreen.innerText
 }
 
 for (let numericKey of numericKeysArray){
@@ -77,3 +83,5 @@ for (let operatorKey of operatorKeysArray){
 }
 
 clearButton.addEventListener('click', clearScreen)
+
+percentKey.addEventListener('click', handleClickPercent)

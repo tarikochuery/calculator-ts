@@ -12,7 +12,10 @@ export const toggleOperatorKeySelection = (operator?: string): void => {
 
   const selectedKeys = operatorKeysArray.filter((key: HTMLButtonElement) => searchOperatorKeyByClass(key))
   const selectedKey = selectedKeys[0]
-  selectedKey.classList.toggle('selected')
+  if (selectedKey){
+    selectedKey.classList.toggle('selected')
+    return
+  }
   return
 }
 
