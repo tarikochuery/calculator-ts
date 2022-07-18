@@ -70,6 +70,11 @@ const clearScreen = (): void => {
 }
 
 const handleClickPercent = (): void => {
+  if (isOperatorSelected === true){
+    calculatorFactory.percent(screenValueAfterSelectOperator)
+    screenValueAfterSelectOperator = calculatorScreen.innerText
+    return
+  }
   calculatorFactory.percent(screenValue)
   screenValue = calculatorScreen.innerText
 }
